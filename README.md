@@ -2,7 +2,8 @@
 
 > A code-inspired twist on the classic Snake game, built for the Boot.dev Hackathon 2025.
 
-In this educational arcade experience, our hungry python slithers through code mazes collecting valid Python keywords — while dodging imposters, errors, and a very grumpy compiler. Each level teaches a new concept from `print()` to loops and functions. 
+In this educational arcade experience, our hungry python slithers through code mazes collecting valid Python keywords — while dodging imposters, errors, and a very grumpy compiler. 
+Each level teaches a new concept from `print()` to loops and functions. 
 
 ---
 
