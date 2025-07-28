@@ -30,34 +30,42 @@ MOVE_EVENT = pygame.USEREVENT + 1
 pygame.time.set_timer(MOVE_EVENT, 1000 // SNAKE_SPEED)
 
 # Assets
-splash_img = pygame.image.load('assets/splash.png').convert()
-devlogo_img = pygame.image.load('assets/devlogo.png').convert_alpha()
-main_menu_splash_img = pygame.image.load('assets/main_menu_splash.png').convert_alpha()
+splash_img = pygame.image.load('assets/sprites/splash.png').convert()
+devlogo_img = pygame.image.load('assets/sprites/devlogo.png').convert_alpha()
+main_menu_splash_img = pygame.image.load('assets/sprites/main_menu_splash.png').convert_alpha()
 # scale main menu splash to cover full screen
 main_menu_splash_img = pygame.transform.smoothscale(main_menu_splash_img, (WIDTH, HEIGHT))
-menu_music = 'assets/menu_music.mp3'
-game_music = 'assets/game_music.mp3'
-boss_music = 'assets/boss_music.mp3'
+menu_music = 'assets/audio/menu_music.mp3'
+game_music = 'assets/audio/game_music.mp3'
+boss_music = 'assets/audio/boss_music.mp3'
 # SFX
-eat_sfx = pygame.mixer.Sound('assets/eat.mp3')
-bump_sfx = pygame.mixer.Sound('assets/console_bump.mp3')
-crash_sfx = pygame.mixer.Sound('assets/crash_into_wall.mp3')
-overflow_sfx = pygame.mixer.Sound('assets/console_overflow.mp3')
-level_sfx = pygame.mixer.Sound('assets/level_complete.mp3')
-complete_sfx = pygame.mixer.Sound('assets/game_complete.mp3')
-gameover_sfx = pygame.mixer.Sound('assets/game_over.mp3')
-click_sfx = pygame.mixer.Sound('assets/menu_button.mp3')
+eat_sfx = pygame.mixer.Sound('assets/audio/eat.mp3')
+bump_sfx = pygame.mixer.Sound('assets/audio/console_bump.mp3')
+crash_sfx = pygame.mixer.Sound('assets/audio/crash_into_wall.mp3')
+overflow_sfx = pygame.mixer.Sound('assets/audio/console_overflow.mp3')
+level_sfx = pygame.mixer.Sound('assets/audio/level_complete.mp3')
+complete_sfx = pygame.mixer.Sound('assets/audio/game_complete.mp3')
+gameover_sfx = pygame.mixer.Sound('assets/audio/game_over.mp3')
+click_sfx = pygame.mixer.Sound('assets/audio/menu_button.mp3')
+sfx_sounds = [eat_sfx, bump_sfx, crash_sfx, overflow_sfx, level_sfx, complete_sfx, gameover_sfx, click_sfx]
+
+# Set default volume
+pygame.mixer.music.set_volume(0.5)
+for sfx in sfx_sounds:
+    sfx.set_volume(0.5)
 
 # Snake asset
-snake_head_img = pygame.image.load('assets/snake_head.png').convert_alpha()
-snake_body_img = pygame.image.load('assets/snake_body.png').convert_alpha()
-snake_tail_img = pygame.image.load('assets/snake_tail.png').convert_alpha()
+snake_head_img = pygame.image.load('assets/sprites/snake_head.png').convert_alpha()
+snake_body_img = pygame.image.load('assets/sprites/snake_body.png').convert_alpha()
+snake_tail_img = pygame.image.load('assets/sprites/snake_tail.png').convert_alpha()
+snake_corner_img = pygame.image.load('assets/sprites/snake_corner.png').convert_alpha()
 snake_head = pygame.transform.scale(snake_head_img, (CELL_SIZE, CELL_SIZE))
 snake_body = pygame.transform.scale(snake_body_img, (CELL_SIZE, CELL_SIZE))
 snake_tail = pygame.transform.scale(snake_tail_img, (CELL_SIZE, CELL_SIZE))
+snake_corner = pygame.transform.scale(snake_corner_img, (CELL_SIZE, CELL_SIZE))
 
 # Enemy asset
-enemy_img = pygame.image.load('assets/enemy_head.png').convert_alpha()
+enemy_img = pygame.image.load('assets/sprites/enemy_head.png').convert_alpha()
 enemy_sprite = pygame.transform.scale(enemy_img, (CELL_SIZE, CELL_SIZE))
 enemy_offset = (0, 0)
 
@@ -74,18 +82,22 @@ btn_play = make_button('Play', 0)
 btn_settings = make_button('Settings', 70)
 btn_credits = make_button('Credits', 140)
 btn_quit = make_button('Quit', 210)
-btn_back = pygame.Rect(20, PLAY_AREA_Y+20, 100, 40)
+btn_back = pygame.Rect(40, HEIGHT - 80, 100, 40)
 btn_continue = pygame.Rect(WIDTH//2-100, PLAY_AREA_Y+GRID_HEIGHT*CELL_SIZE//2, 200, 50)
 btn_retry = pygame.Rect(WIDTH//2-160, PLAY_AREA_Y+GRID_HEIGHT*CELL_SIZE//2, 150, 50)
 btn_menu = pygame.Rect(WIDTH//2+10, PLAY_AREA_Y+GRID_HEIGHT*CELL_SIZE//2, 150, 50)
 
+# Sliders
+slider_music_rect = pygame.Rect(300, 205, 200, 10)
+slider_sfx_rect = pygame.Rect(300, 255, 200, 10)
+
 # Levels
 development_levels = [
-    {'statement':'Fill in print()',   'required':['print'],             'options':['print','echo','write','display']},
-    {'statement':'Conditionals: if ___','required':['if','else'],          'options':['if','else','switch','case','default']},
-    {'statement':'Loop or magic',      'required':['for'],               'options':['for','drift','dance','hide','while','do']},
-    {'statement':'Define func: def ___','required':['def','return'],       'options':['def','return','void','int','string','heal','shrink','grow']},
-    {'statement':'Loop control: while ___','required':['while','break'],'options':['while','break','continue','goto']}
+    {'template':'_____("Hello, World!")',   'required':['print'], 'options':['print','echo','write','display']},
+    {'template':'if a > b: _____', 'required':['pass'], 'options':['pass','continue','break','return']},
+    {'template':'for i in _____(5):', 'required':['range'], 'options':['range','loop','go','iter']},
+    {'template':'_____ my_func():\n  _____ "Hello"', 'required':['def','return'], 'options':['def','return','func','void']},
+    {'template':'while True:\n  _____', 'required':['break'], 'options':['break','stop','exit','continue']}
 ]
 
 # State vars
@@ -103,6 +115,7 @@ event_log = []
 shake = 0
 enemy_pos = None
 enemy_frozen = False
+selected_slider = None
 
 # Helpers
 def play_music(music_file):
@@ -124,9 +137,17 @@ def setup_play():
         w,h = surf.get_size()
         offs = ((w-CELL_SIZE)//2, (h-CELL_SIZE)//2)
         while True:
-            x = random.randrange(GRID_WIDTH)
-            y = random.randrange(GRID_HEIGHT)
-            if (x,y) not in snake and all(t['pos']!=(x,y) for t in keyword_tiles):
+            x = random.randrange(1, GRID_WIDTH - 1)
+            y = random.randrange(1, GRID_HEIGHT - 1)
+            
+            too_close = False
+            for t in keyword_tiles:
+                dist = abs(x - t['pos'][0]) + abs(y - t['pos'][1])
+                if dist < 3:
+                    too_close = True
+                    break
+            
+            if not too_close and (x,y) not in snake:
                 rect = pygame.Rect(x * CELL_SIZE - offs[0], y * CELL_SIZE + PLAY_AREA_Y - offs[1], w, h)
                 keyword_tiles.append({'text':kw,'surf':surf,'pos':(x,y),'offs':offs, 'rect': rect})
                 break
@@ -145,8 +166,28 @@ def draw_console():
     shake = max(shake-1,0)
     pygame.draw.rect(SCREEN, (30,30,30), (dx,0,WIDTH,CONSOLE_HEIGHT))
     pygame.draw.rect(SCREEN, (200,200,200), (dx,0,WIDTH,CONSOLE_HEIGHT), 2)
-    stmt = development_levels[level]['statement']
-    SCREEN.blit(font_problem.render(stmt, True, (240,240,240)), (10+dx,40))
+    
+    template = development_levels[level]['template']
+    num_blanks = template.count('_____')
+    
+    # Create a list of collected keywords to fill in the blanks
+    fill_ins = collected + ['_____'] * (num_blanks - len(collected))
+    
+    # Replace placeholders with collected keywords
+    # This is a bit tricky since str.replace is not indexed
+    parts = template.split('_____')
+    result = ""
+    for i, part in enumerate(parts):
+        result += part
+        if i < len(fill_ins):
+            result += fill_ins[i]
+
+    # Render line by line
+    y_offset = 10
+    for line in result.split('\n'):
+        SCREEN.blit(font_problem.render(line, True, (240,240,240)), (10+dx, y_offset))
+        y_offset += 25
+
     for i,msg in enumerate(event_log[-5:]):
         SCREEN.blit(font_log.render(msg, True, (255,255,255)), (10+dx,70+i*30))
 
@@ -181,7 +222,7 @@ def draw_snake():
                 elif (prev_v, next_v) in [((1,0),(0,1)), ((0,1),(1,0))]: ang = 180  # right-down
                 elif (prev_v, next_v) in [((0,1),(-1,0)), ((-1,0),(0,1))]: ang = 90 # down-left
                 elif (prev_v, next_v) in [((-1,0),(0,-1)), ((0,-1),(-1,0))]: ang = 0   # left-up
-                blit_cell(pygame.transform.rotate(snake_body, ang), (0,0), x, y)
+                blit_cell(pygame.transform.rotate(snake_corner, ang), (0,0), x, y)
                 continue
             blit_cell(pygame.transform.rotate(snake_body, ang), (0,0), x, y)
 
@@ -208,10 +249,26 @@ def draw_menu():
     # draw background splash scaled behind buttons (if desired)
 
 def draw_settings():
+    global selected_slider
     SCREEN.fill((20,20,20))
     SCREEN.blit(font_title.render('Settings', True, (255,255,255)), (WIDTH//2-100,100))
+    
+    # Music Volume
     SCREEN.blit(font_log.render(f"Music Vol: {pygame.mixer.music.get_volume():.2f}", True, (255,255,255)), (100,200))
+    pygame.draw.rect(SCREEN, (100,100,100), slider_music_rect)
+    music_vol_pos = slider_music_rect.x + int(pygame.mixer.music.get_volume() * slider_music_rect.width)
+    pygame.draw.rect(SCREEN, (200,200,255), (music_vol_pos - 5, slider_music_rect.y - 5, 10, 20))
+    if selected_slider == 'music':
+        pygame.draw.rect(SCREEN, (255,255,0), slider_music_rect, 2)
+
+    # SFX Volume
     SCREEN.blit(font_log.render(f"SFX Vol: {eat_sfx.get_volume():.2f}", True, (255,255,255)), (100,250))
+    pygame.draw.rect(SCREEN, (100,100,100), slider_sfx_rect)
+    sfx_vol_pos = slider_sfx_rect.x + int(eat_sfx.get_volume() * slider_sfx_rect.width)
+    pygame.draw.rect(SCREEN, (200,200,255), (sfx_vol_pos - 5, slider_sfx_rect.y - 5, 10, 20))
+    if selected_slider == 'sfx':
+        pygame.draw.rect(SCREEN, (255,255,0), slider_sfx_rect, 2)
+
     pygame.draw.rect(SCREEN, (100,100,200), btn_back)
     SCREEN.blit(font_menu.render('Back', True, (255,255,255)), (btn_back.x+10, btn_back.y+5))
 
@@ -245,7 +302,6 @@ def move_snake():
     for t in keyword_tiles:
         if t['rect'].colliderect(head_rect):
             ate_keyword = True
-            event_log.append(f"Picked {t['text']}")
             collected.append(t['text'])
             keyword_tiles.remove(t)
             eat_sfx.play()
@@ -265,7 +321,6 @@ def move_snake():
                 level_sfx.play()
                 return
         shake = 10
-        event_log.append('Bumped console')
         bump_sfx.play()
         if collected:
             rem = collected.pop()
@@ -370,14 +425,63 @@ while True:
                     setup_play()
                 elif btn_settings.collidepoint(mx,my):
                     state = ST_SETTINGS
+                    selected_slider = 'music'
                 elif btn_credits.collidepoint(mx,my):
                     state = ST_CREDITS
                 elif btn_quit.collidepoint(mx,my):
                     pygame.quit()
                     sys.exit()
         elif state == ST_SETTINGS:
-            if ev.type == pygame.MOUSEBUTTONDOWN and btn_back.collidepoint(ev.pos):
-                state = ST_MENU
+            if ev.type == pygame.MOUSEBUTTONDOWN:
+                if btn_back.collidepoint(ev.pos):
+                    state = ST_MENU
+                    selected_slider = None
+                elif slider_music_rect.collidepoint(ev.pos):
+                    selected_slider = 'music'
+                    pos = ev.pos[0] - slider_music_rect.x
+                    vol = max(0.0, min(1.0, pos / slider_music_rect.width))
+                    pygame.mixer.music.set_volume(vol)
+                elif slider_sfx_rect.collidepoint(ev.pos):
+                    selected_slider = 'sfx'
+                    pos = ev.pos[0] - slider_sfx_rect.x
+                    vol = max(0.0, min(1.0, pos / slider_sfx_rect.width))
+                    for sfx in sfx_sounds:
+                        sfx.set_volume(vol)
+                else:
+                    selected_slider = None
+            elif ev.type == pygame.MOUSEMOTION:
+                if ev.buttons[0]:  # Left mouse button held down
+                    if selected_slider == 'music' and slider_music_rect.collidepoint(ev.pos):
+                        pos = ev.pos[0] - slider_music_rect.x
+                        vol = max(0.0, min(1.0, pos / slider_music_rect.width))
+                        pygame.mixer.music.set_volume(vol)
+                    elif selected_slider == 'sfx' and slider_sfx_rect.collidepoint(ev.pos):
+                        pos = ev.pos[0] - slider_sfx_rect.x
+                        vol = max(0.0, min(1.0, pos / slider_sfx_rect.width))
+                        for sfx in sfx_sounds:
+                            sfx.set_volume(vol)
+            elif ev.type == pygame.KEYDOWN:
+                if ev.key == pygame.K_UP:
+                    if selected_slider == 'sfx':
+                        selected_slider = 'music'
+                elif ev.key == pygame.K_DOWN:
+                    if selected_slider == 'music':
+                        selected_slider = 'sfx'
+                elif selected_slider == 'music':
+                    vol = pygame.mixer.music.get_volume()
+                    if ev.key == pygame.K_LEFT:
+                        vol = max(0.0, vol - 0.1)
+                    elif ev.key == pygame.K_RIGHT:
+                        vol = min(1.0, vol + 0.1)
+                    pygame.mixer.music.set_volume(vol)
+                elif selected_slider == 'sfx':
+                    vol = eat_sfx.get_volume()
+                    if ev.key == pygame.K_LEFT:
+                        vol = max(0.0, vol - 0.1)
+                    elif ev.key == pygame.K_RIGHT:
+                        vol = min(1.0, vol + 0.1)
+                    for sfx in sfx_sounds:
+                        sfx.set_volume(vol)
         elif state == ST_CREDITS:
             if ev.type == pygame.MOUSEBUTTONDOWN and btn_back.collidepoint(ev.pos):
                 state = ST_MENU
