@@ -1,18 +1,8 @@
-# 🐍 Python Learns Keywords 🐍
+# 🐍 Broken Python 🐍
 
 > A code-inspired twist on the classic Snake game, built for the Boot.dev Hackathon 2025.
 
 In this educational arcade experience, our hungry python slithers through code mazes collecting valid Python keywords—while dodging imposters, errors, and a very grumpy compiler. Each level teaches a new concept from `print()` to loops and functions.
-
----
-
-## 🎮 Gameplay Preview
-
-![Main Menu](assets/screenshots/main_menu.png)  
-![Level 1](assets/screenshots/level_1.png)  
-![Level Complete](assets/screenshots/level_complete.png)
-
-> *Replace the above with real screenshots from your assets folder.*
 
 ---
 
@@ -38,13 +28,18 @@ In this educational arcade experience, our hungry python slithers through code m
 ## 📦 Installation & Setup
 
 1. **Clone the repo:**
+
    bash
    git clone https://github.com/yourusername/python-learns-keywords.git
    cd python-learns-keywords
-2. Install dependencies:
+   
+3. Install dependencies:
+
   bash
   pip install pygame
-3. Run the game:
+
+5. Run the game:
+
   bash
   python game.py
 
