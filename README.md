@@ -29,14 +29,11 @@ Each level teaches a new concept from `print()` to loops and functions.
 ## 📦 Installation & Setup
 
 **Clone the repo:**
-bash
-git clone https://github.com/yourusername/python-learns-keywords.git
-cd python-learns-keywords
+1. git clone https://github.com/jasminevirk/broken_python
+2. cd broken_python
    
 **Install dependencies:**
-bash
-pip install pygame
+1. pip install pygame
 
 **Run the game:**
-bash
-python game.py
+1. python snake.py
