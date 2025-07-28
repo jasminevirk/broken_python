@@ -27,15 +27,15 @@ In this educational arcade experience, our hungry python slithers through code m
 
 ## 📦 Installation & Setup
 
-1. **Clone the repo:**
-   bash
-   git clone https://github.com/yourusername/python-learns-keywords.git
-   cd python-learns-keywords
+**Clone the repo:**
+bash
+git clone https://github.com/yourusername/python-learns-keywords.git
+cd python-learns-keywords
    
-2. Install dependencies:
-   bash
-   pip install pygame
+**Install dependencies:**
+bash
+pip install pygame
 
-3. Run the game:
-   bash
-   python game.py
+**Run the game:**
+bash
+python game.py
