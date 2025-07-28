@@ -21,7 +21,6 @@ CONSOLE_HEIGHT = int(HEIGHT * CONSOLE_RATIO)
 PLAY_AREA_Y = CONSOLE_HEIGHT
 GRID_WIDTH = WIDTH // CELL_SIZE
 GRID_HEIGHT = (HEIGHT - PLAY_AREA_Y) // CELL_SIZE
-MAX_LIVES = 3
 LEVEL_COUNT = 5
 
 # Snake speed control: moves per second
@@ -93,11 +92,11 @@ slider_sfx_rect = pygame.Rect(300, 255, 200, 10)
 
 # Levels
 development_levels = [
-    {'template':'_____("Hello, World!")',   'required':['print'], 'options':['print','echo','write','display']},
-    {'template':'if a > b: _____', 'required':['pass'], 'options':['pass','continue','break','return']},
-    {'template':'for i in _____(5):', 'required':['range'], 'options':['range','loop','go','iter']},
-    {'template':'_____ my_func():\n  _____ "Hello"', 'required':['def','return'], 'options':['def','return','func','void']},
-    {'template':'while True:\n  _____', 'required':['break'], 'options':['break','stop','exit','continue']}
+    {'template':'_____("Hello, World!")\n # Eat the right word to greet the world!',   'required':['print'], 'options':['print','echo','write','display']},
+    {'template':'_____ true: print(\"Load next level\"\n # Eat the right conditional statement to proceed!)', 'required':['if'], 'options':['if','else','switch','case']},
+    {'template':'for i in _____(5):\n # Complete the syntax for the loop!', 'required':['range'], 'options':['range','loop','go','iter']},
+    {'template':'_____ my_func():\n  _____ "Hello"\n # Pick the words in the right order. If you mess up, bump into the console to pop it out!', 'required':['def','return'], 'options':['def','return','func','void']},
+    {'template':'while True:\n  _____\n # Pick the right word to stop the rogue AI!', 'required':['break'], 'options':['break','stop','exit','continue']}
 ]
 
 # State vars
@@ -106,7 +105,6 @@ splash_start = pygame.time.get_ticks()
 devlogo_start = 0
 game_complete_start = 0
 level = 0
-lives = MAX_LIVES
 snake = [(5,5)]
 direction = (1,0)
 keyword_tiles = []
@@ -124,11 +122,10 @@ def play_music(music_file):
 
 # Setup play state
 def setup_play():
-    global snake, direction, keyword_tiles, collected, lives, event_log, enemy_pos, enemy_frozen
+    global snake, direction, keyword_tiles, collected, event_log, enemy_pos, enemy_frozen
     snake = [(5, 5), (4, 5), (3, 5)]
     direction = (1,0)
     collected.clear()
-    lives = MAX_LIVES
     event_log.clear()
     keyword_tiles.clear()
     opts = development_levels[level]['options']
@@ -235,7 +232,7 @@ def draw_enemy():
         blit_cell(enemy_sprite, enemy_offset, *enemy_pos)
 
 def draw_score():
-    text = f"Lives:{lives} Collected:{len(collected)}/{len(development_levels[level]['required'])}"
+    text = f"Collected:{len(collected)}/{len(development_levels[level]['required'])}"
     SCREEN.blit(font_log.render(text, True, (255,255,255)), (10, PLAY_AREA_Y+10))
 
 def draw_menu():
@@ -292,7 +289,7 @@ def draw_game_complete():
 
 # Movement & logic
 def move_snake():
-    global shake, lives, state, direction
+    global shake, state, direction
     hx, hy = snake[0]
     head = (hx + direction[0], hy + direction[1])
     snake.insert(0, head)
@@ -338,13 +335,9 @@ def move_snake():
         direction = random.choice([(-1,0),(1,0)])
     
     elif x < 0 or x >= GRID_WIDTH or y >= GRID_HEIGHT:  # wall collision
-        lives -= 1
         crash_sfx.play()
-        if lives <= 0:
-            state = ST_GAME_OVER
-            play_music(None)
-        else:
-            setup_play()
+        state = ST_GAME_OVER
+        gameover_sfx.play()
         return
     if level == 4 and state == ST_PLAY and enemy_pos is not None and not enemy_frozen:  # enemy chase
         ex, ey = enemy_pos
@@ -374,13 +367,9 @@ def move_snake():
         enemy_pos[0] += step_x
         enemy_pos[1] += step_y
         if (enemy_pos[0], enemy_pos[1]) == head:
-            lives -= 1
             crash_sfx.play()
-            if lives <= 0:
-                state = ST_GAME_OVER
-                play_music(None)
-            else:
-                setup_play()
+            state = ST_GAME_OVER
+            gameover_sfx.play()
             return
 
     if not ate_keyword:
