@@ -1,0 +1,370 @@
+:root {
+  --bg: #0d1117;
+  --panel: #181d29;
+  --console: #12151c;
+  --line: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --blue: #3776ab;
+  --yellow: #ffd43b;
+  --green: #3fb950;
+  --red: #f85149;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: radial-gradient(circle at top, #1b2230, var(--bg) 55%);
+  color: var(--text);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+#app {
+  min-height: 100dvh;
+}
+
+.screen {
+  display: none;
+  min-height: 100dvh;
+}
+
+.screen.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.splash-img,
+.logo-img {
+  max-width: min(720px, 90vw);
+  max-height: 58vh;
+  object-fit: contain;
+}
+
+.cta {
+  margin-top: 28px;
+  padding: 14px 22px;
+  border: 2px solid var(--yellow);
+  background: transparent;
+  color: var(--yellow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.cta:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.pulse {
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 212, 59, 0.08);
+  }
+}
+
+.fine-print {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.menu-screen {
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.menu-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(8, 10, 16, 0.2), rgba(8, 10, 16, 0.78) 58%);
+}
+
+.menu-panel {
+  position: relative;
+  margin-left: auto;
+  margin-right: 6vw;
+  width: min(380px, 92vw);
+  padding: 28px 24px;
+  background: rgba(13, 17, 23, 0.78);
+  border: 1px solid rgba(255, 212, 59, 0.28);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
+}
+
+.eyebrow {
+  color: var(--yellow);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.menu-panel h1,
+.card h2 {
+  font-family: "Press Start 2P", monospace;
+  font-size: 22px;
+  line-height: 1.4;
+  color: var(--yellow);
+  margin: 0 0 12px;
+}
+
+.tagline,
+.card p,
+.card li {
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.menu-btn {
+  display: block;
+  width: 100%;
+  margin: 10px 0 0;
+  padding: 12px 14px;
+  border: 1px solid var(--blue);
+  background: rgba(55, 118, 171, 0.18);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.menu-btn:hover,
+.tiny:hover,
+.dpad button:hover {
+  background: rgba(55, 118, 171, 0.4);
+}
+
+.menu-btn.primary {
+  background: var(--blue);
+  border-color: #4f8ec4;
+  color: #fff;
+}
+
+.overlay-screen {
+  background: rgba(8, 10, 16, 0.92);
+}
+
+.card {
+  width: min(560px, 92vw);
+  padding: 28px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.card.compact {
+  width: min(420px, 92vw);
+  text-align: center;
+}
+
+.card ul {
+  padding-left: 18px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.slider-row {
+  display: block;
+  margin: 18px 0;
+}
+
+.slider-row span {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.slider-row input {
+  width: 100%;
+  accent-color: var(--yellow);
+}
+
+.play-screen.active {
+  justify-content: flex-start;
+  padding: 12px 12px 20px;
+  gap: 10px;
+}
+
+.console {
+  width: min(960px, 100%);
+  background: var(--console);
+  border: 1px solid #2d333b;
+  padding: 10px 14px 8px;
+  box-shadow: var(--shadow);
+}
+
+.console-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--yellow);
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.console-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.tiny {
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  background: #21262d;
+  color: var(--text);
+  cursor: pointer;
+}
+
+#code-view {
+  margin: 10px 0 6px;
+  color: #d5e0ef;
+  font-size: 15px;
+  white-space: pre-wrap;
+}
+
+.blank {
+  color: var(--yellow);
+}
+
+.kw.ok {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.kw.bad {
+  color: var(--red);
+  font-weight: 600;
+  text-decoration: underline wavy var(--red);
+}
+
+.comment {
+  color: #7d8590;
+}
+
+#hint,
+#event-log {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+#canvas-wrap {
+  position: relative;
+  width: min(960px, 100%);
+  height: min(62vh, 560px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0b0e14;
+  border: 1px solid #2d333b;
+}
+
+#game {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  image-rendering: pixelated;
+  touch-action: none;
+}
+
+.play-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 10, 16, 0.72);
+}
+
+.play-overlay.active {
+  display: flex;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.row .menu-btn {
+  flex: 1;
+}
+
+.danger {
+  color: var(--red);
+}
+
+.gold {
+  color: var(--yellow);
+}
+
+.dpad {
+  display: none;
+  width: min(220px, 70vw);
+  margin: 4px auto 10px;
+  user-select: none;
+  touch-action: none;
+}
+
+.dpad button {
+  width: 64px;
+  height: 48px;
+  margin: 4px auto;
+  display: block;
+  border: 1px solid var(--blue);
+  background: rgba(55, 118, 171, 0.25);
+  color: var(--text);
+  font-size: 18px;
+}
+
+.dpad-mid {
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (max-width: 800px), (pointer: coarse) {
+  .dpad {
+    display: block;
+  }
+
+  .menu-panel {
+    margin: 0 auto;
+  }
+
+  .menu-shade {
+    background: rgba(8, 10, 16, 0.72);
+  }
+
+  #canvas-wrap {
+    height: min(52vh, 480px);
+  }
+
+  .card h2,
+  .menu-panel h1 {
+    font-size: 16px;
+  }
+}

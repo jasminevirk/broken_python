@@ -1,0 +1,43 @@
+const LEVELS = [
+  {
+    title: "Hello, World",
+    hint: "Eat the function that writes to the screen.",
+    template: '_____("Hello, World!")',
+    comment: "# Greet the world with the right keyword.",
+    required: ["print"],
+    options: ["print", "echo", "write", "display"],
+  },
+  {
+    title: "Conditionals",
+    hint: "Eat the keyword that starts a condition.",
+    template: '_____ True:\n    print("Load next level")',
+    comment: "# Pick the right conditional to proceed.",
+    required: ["if"],
+    options: ["if", "else", "switch", "case"],
+  },
+  {
+    title: "Loops",
+    hint: "Complete the for-loop sequence.",
+    template: "for i in _____(5):",
+    comment: "# Complete the syntax for the loop.",
+    required: ["range"],
+    options: ["range", "loop", "go", "iter"],
+  },
+  {
+    title: "Functions",
+    hint: "Eat def, then return — order matters. Bump the top wall to undo.",
+    template: '_____ my_func():\n    _____ "Hello"',
+    comment: "# Pick the words in the right order.",
+    required: ["def", "return"],
+    options: ["def", "return", "func", "void"],
+  },
+  {
+    title: "Rogue AI",
+    hint: "Eat break to freeze the bug. Don't get caught!",
+    template: "while True:\n    _____",
+    comment: "# Stop the rogue process before it catches you.",
+    required: ["break"],
+    options: ["break", "stop", "exit", "continue"],
+    boss: true,
+  },
+];

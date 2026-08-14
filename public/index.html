@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0d1117" />
+    <title>Broken Python</title>
+    <link rel="icon" href="assets/sprites/snake_head.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <section id="screen-splash" class="screen active">
+        <img src="assets/sprites/splash.jpg" alt="Disco Panda Studios" class="splash-img" />
+        <button id="btn-start" class="cta pulse" data-click disabled>Loading…</button>
+        <p class="fine-print">No account. No login. Just play.</p>
+      </section>
+
+      <section id="screen-logo" class="screen">
+        <img src="assets/sprites/devlogo.png" alt="Boot.dev" class="logo-img" />
+      </section>
+
+      <section id="screen-menu" class="screen menu-screen">
+        <img src="assets/sprites/main_menu_splash.jpg" alt="" class="menu-bg" />
+        <div class="menu-shade"></div>
+        <div class="menu-panel">
+          <p class="eyebrow">Boot.dev Hackathon</p>
+          <h1>Broken Python</h1>
+          <p class="tagline">Eat the right keywords. Fix the code. Dodge the bug.</p>
+          <button id="btn-play" class="menu-btn primary" data-click>Play</button>
+          <button id="btn-howto" class="menu-btn" data-click>How to Play</button>
+          <button id="btn-settings" class="menu-btn" data-click>Settings</button>
+          <button id="btn-credits" class="menu-btn" data-click>Credits</button>
+        </div>
+      </section>
+
+      <section id="screen-howto" class="screen overlay-screen">
+        <div class="card">
+          <h2>How to Play</h2>
+          <ul>
+            <li>Slither through the grid and eat Python keywords to fill the blanks in the console.</li>
+            <li>Green tiles are real keywords. Red tiles are imposters.</li>
+            <li>Words must be eaten <strong>in order</strong>. Wrong bite? Hit the <strong>top wall</strong> (the console) to spit it back out.</li>
+            <li>Don't crash into walls, yourself, or the rogue snake on the last level.</li>
+            <li><strong>Arrows</strong> or <strong>WASD</strong> to move. Swipe or use the d-pad on mobile.</li>
+            <li><strong>P</strong> / <strong>Esc</strong> pauses. <strong>M</strong> mutes.</li>
+          </ul>
+          <button class="menu-btn primary" data-back data-click>Back</button>
+        </div>
+      </section>
+
+      <section id="screen-settings" class="screen overlay-screen">
+        <div class="card">
+          <h2>Settings</h2>
+          <label class="slider-row">
+            <span>Music <em id="music-vol-val">50%</em></span>
+            <input id="music-vol" type="range" min="0" max="1" step="0.01" />
+          </label>
+          <label class="slider-row">
+            <span>Sound FX <em id="sfx-vol-val">50%</em></span>
+            <input id="sfx-vol" type="range" min="0" max="1" step="0.01" />
+          </label>
+          <button class="menu-btn" data-mute data-click>Mute</button>
+          <button class="menu-btn primary" data-back data-click>Back</button>
+        </div>
+      </section>
+
+      <section id="screen-credits" class="screen overlay-screen">
+        <div class="card">
+          <h2>Credits</h2>
+          <p>Original game by <strong>Jaz, Onu &amp; Chammi</strong></p>
+          <p>Built for the Boot.dev Hackathon</p>
+          <p>Pixel snake sprites drawn in Piskel</p>
+          <p class="muted">Web port: play instantly in the browser. No login required.</p>
+          <button class="menu-btn primary" data-back data-click>Back</button>
+        </div>
+      </section>
+
+      <section id="screen-play" class="screen play-screen">
+        <header id="console" class="console">
+          <div class="console-bar">
+            <span id="level-label">LEVEL 1/5</span>
+            <span id="collect-label">0/1</span>
+            <div class="console-actions">
+              <button id="btn-pause" class="tiny" data-click>Pause</button>
+              <button class="tiny" data-mute data-click>Mute</button>
+            </div>
+          </div>
+          <pre id="code-view"></pre>
+          <p id="hint"></p>
+          <p id="event-log"></p>
+        </header>
+
+        <div id="canvas-wrap">
+          <canvas id="game" width="720" height="480"></canvas>
+
+          <div id="overlay-pause" class="play-overlay">
+            <div class="card compact">
+              <h2>Paused</h2>
+              <button id="btn-resume" class="menu-btn primary" data-click>Resume</button>
+              <button id="btn-pause-menu" class="menu-btn" data-click>Menu</button>
+            </div>
+          </div>
+
+          <div id="overlay-level" class="play-overlay">
+            <div class="card compact">
+              <h2>Level Complete</h2>
+              <p>Syntax checks out. Keep going.</p>
+              <button id="btn-continue" class="menu-btn primary" data-click>Continue</button>
+            </div>
+          </div>
+
+          <div id="overlay-over" class="play-overlay">
+            <div class="card compact">
+              <h2 class="danger">Game Over</h2>
+              <p>The compiler is not amused.</p>
+              <div class="row">
+                <button id="btn-retry" class="menu-btn primary" data-click>Retry</button>
+                <button id="btn-over-menu" class="menu-btn" data-click>Menu</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="overlay-complete" class="play-overlay">
+            <div class="card compact">
+              <h2 class="gold">You fixed Python</h2>
+              <p>All five snippets compiled. The rogue process is frozen.</p>
+              <div class="row">
+                <button id="btn-again" class="menu-btn primary" data-click>Play Again</button>
+                <button id="btn-complete-menu" class="menu-btn" data-click>Menu</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav id="dpad" class="dpad" aria-label="Direction pad">
+          <button data-dir="up" aria-label="Up">▲</button>
+          <div class="dpad-mid">
+            <button data-dir="left" aria-label="Left">◀</button>
+            <button data-dir="right" aria-label="Right">▶</button>
+          </div>
+          <button data-dir="down" aria-label="Down">▼</button>
+        </nav>
+      </section>
+    </div>
+
+    <script src="js/levels.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/input.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
