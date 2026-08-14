@@ -6,9 +6,10 @@ Play in the browser. **No account. No login.**
 
 ## Play
 
-Open the hosted game:
+Open the hosted game (no account required):
 
-**https://broken-python-arcade.web.app**
+- **https://broken-python-arcade.web.app**
+- https://broken-python-arcade.firebaseapp.com
 
 Or run it locally:
 
