@@ -1,39 +1,40 @@
-# 🐍 Broken Python 🐍
+# Broken Python
 
-> A code-inspired twist on the classic Snake game, built for the Boot.dev Hackathon 2025.
+A keyword-eating Snake game. Slither through a code maze, collect valid Python keywords in order, and dodge imposters — plus a rogue compiler bug on the last level.
 
-In this educational arcade experience, our hungry python slithers through code mazes collecting valid Python keywords — while dodging imposters, errors, and a very grumpy compiler. 
-Each level teaches a new concept from `print()` to loops and functions. 
+Play in the browser. **No account. No login.**
 
----
+## Play
 
-## 🧠 Game Features
+Open the hosted game:
 
-- 🐍 **Keyword-Focused Levels**  
-  Learn or rather revise Python basics in 5 structured levels.
+**https://broken-python-arcade.web.app**
 
-- ⚡ **Code Console Mechanics**  
-  Bump into the console if you've picked the wrong keyword.
+Or run it locally:
 
-- 🤖 **Chase Mode (Final Level)**  
-  Race against a bugged enemy snake that hunts you down in the final level.
+```bash
+npx -y serve public
+```
 
-- 🔊 **Sound & Music FX**  
-  Passable music and audio, but hey, it's there.
+Then visit the URL printed in the terminal.
 
-- 🎨 **Pixel Art Snake Sprites**  
-  Snake sprites were designed manually on Piskel cos vibe generating transparent PNGs was nearly impossible. Possible skill issue.
+## How to play
 
----
+- Eat **green** keywords to fill the blanks in the console
+- **Red** tiles are fakes
+- Words must be eaten in order (`def` then `return`)
+- Hit the **top wall** (the console) to spit out a wrong word
+- Don't crash into walls, yourself, or the enemy snake
+- Arrows / WASD / swipe / on-screen d-pad
+- `P` or `Esc` pauses, `M` mutes
 
-## 📦 Installation & Setup
+Five levels: `print`, `if`, `range`, `def` + `return`, and a boss chase for `break`.
 
-**Clone the repo:**
-1. git clone https://github.com/jasminevirk/broken_python
-2. cd broken_python
-   
-**Install dependencies:**
-1. pip install pygame
+## Desktop prototype
 
-**Run the game:**
-1. python snake.py
+The original Pygame hackathon build lives in [`legacy/snake.py`](legacy/snake.py).
+
+```bash
+pip install pygame
+python legacy/snake.py
+```
