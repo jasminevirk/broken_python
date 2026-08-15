@@ -84,7 +84,7 @@ function resizeCanvas() {
   if (!canvas || !wrap) return;
   const maxW = wrap.clientWidth;
   const maxH = wrap.clientHeight;
-  const cell = Math.max(18, Math.floor(Math.min(maxW / GRID_W, maxH / GRID_H)));
+  const cell = Math.max(26, Math.floor(Math.min(maxW / GRID_W, maxH / GRID_H)));
   Game.cell = cell;
   canvas.width = cell * GRID_W;
   canvas.height = cell * GRID_H;

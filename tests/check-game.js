@@ -121,3 +121,55 @@ assert(
 );
 
 console.log("All gameplay checks passed.");
+
+const renderCtx = {
+  console,
+  performance: { now: Date.now },
+  Game: context.Game,
+  GRID_W: 18,
+  GRID_H: 12,
+  currentLevel() {
+    return context.LEVELS[context.Game.levelIndex];
+  },
+  document: {
+    createElement() {
+      return {
+        width: 0,
+        height: 0,
+        getContext() {
+          return { imageSmoothingEnabled: false, fillStyle: "", fillRect() {} };
+        },
+      };
+    },
+  },
+};
+vm.createContext(renderCtx);
+vm.runInContext(
+  fs.readFileSync(path.join(root, "render.js"), "utf8"),
+  renderCtx
+);
+
+assert(renderCtx.splitWord("continue").join("/") === "cont/inue", "continue wraps at midpoint");
+assert(renderCtx.splitWord("display").join("/") === "disp/lay", "display wraps at midpoint");
+assert(renderCtx.readableFloor(40) === 12, "readable floor is 12px on normal cells");
+assert(renderCtx.readableFloor(26) === 11, "readable floor is 11px on small cells");
+
+renderCtx.buildEnemySet(false);
+renderCtx.buildEnemySet(true);
+
+const fakeCtx = {
+  font: "",
+  measureText(text) {
+    const match = this.font.match(/(\d+)px/);
+    const size = match ? Number(match[1]) : 12;
+    return { width: text.length * size * 0.62 };
+  },
+};
+const short = renderCtx.layoutKeyword(fakeCtx, "if", 40);
+assert(short.lines.length === 1 && short.lines[0] === "if", "short words stay on one line");
+assert(short.size >= 12, "short words stay at readable size");
+const long = renderCtx.layoutKeyword(fakeCtx, "continue", 40);
+assert(long.lines.length === 2, "continue wraps instead of shrinking below the floor");
+assert(long.size >= 12, "wrapped keywords stay readable");
+
+console.log("Render helper checks passed.");
