@@ -33,7 +33,7 @@ const LEVELS = [
   },
   {
     title: "Rogue AI",
-    hint: "Eat break to freeze the bug. Don't get caught!",
+    hint: "Eat break to freeze the rogue process. Don't get caught!",
     template: "while True:\n    _____",
     comment: "# Stop the rogue process before it catches you.",
     required: ["break"],
